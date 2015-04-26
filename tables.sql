@@ -9,6 +9,8 @@ description text,
 create_date timestamp with time zone DEFAULT current_timestamp
 );
 
+ALTER TABLE artists ADD additional_name_info1 text;
+ALTER TABLE artists ADD additional_name_info2 text;
 ALTER TABLE artists ADD additional_info1 text;
 ALTER TABLE artists ADD additional_info2 text;
 ALTER TABLE artists ADD additional_info3 text;
@@ -36,6 +38,10 @@ additional_info3 text
 
 ALTER TABLE articles ADD title text not null;
 
+ALTER TABLE articles ADD additional_title_info1 text;
+ALTER TABLE articles ADD additional_title_info2 text;
+ALTER TABLE articles ADD additional_content_info1 text;
+ALTER TABLE articles ADD additional_content_info2 text;
 
 create sequence comment_serial;
 
@@ -47,8 +53,21 @@ publish_date date,
 title text,
 content text not null,
 create_date timestamp with time zone DEFAULT current_timestamp,
-rate smallint default 0, --0,1,2,3,4,5
+article_rate smallint default 0, --0,1,2,3,4,5
+comment_rate smallint default 0, --0,1,2,3,4,5
 additional_info1 text,
 additional_info2 text,
 additional_info3 text
 );
+
+
+
+select title, substring(title,1,position('（' in title)-1),
+  substring(title,position('（' in title)+1, position('）' in title)-position('（' in title) -1)
+from articles where title like '%（%）';
+
+update articles
+set title = substring(title,1,position('（' in title)-1),
+  additional_title_info1 = substring(title,position('（' in title)+1, position('）' in title)-position('（' in title) -1)
+where title like '%（%）';
+
